@@ -72,7 +72,7 @@ impl CfgRegB {
         CfgRegB(bits)
     }
 
-    pub fn off_canc_one_shot<I2C>(&mut self) -> bool {
+    pub fn off_canc_one_shot(&mut self) -> bool {
         self.0 & (1 << OFF_CANC_ONE_SHOT) != 0
     }
 
@@ -89,7 +89,7 @@ impl CfgRegB {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn int_on_dataoff<I2C>(&mut self) -> bool {
+    pub fn int_on_dataoff(&mut self) -> bool {
         self.0 & (1 << INT_ON_DATAOFF) != 0
     }
 
@@ -102,7 +102,7 @@ impl CfgRegB {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn set_freq<I2C>(&mut self) -> bool {
+    pub fn set_freq(&mut self) -> bool {
         self.0 & (1 << SET_FREQ) != 0
     }
 
@@ -115,7 +115,7 @@ impl CfgRegB {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn off_canc<I2C>(&mut self) -> bool {
+    pub fn off_canc(&mut self) -> bool {
         self.0 & (1 << OFF_CANC) != 0
     }
 
@@ -128,7 +128,7 @@ impl CfgRegB {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn lpf<I2C>(&mut self) -> bool {
+    pub fn lpf(&mut self) -> bool {
         self.0 & (1 << LPF) != 0
     }
 
