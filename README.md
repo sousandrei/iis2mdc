@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/sousandrei/iis2mdc/workflows/Main/badge.svg)](https://github.com/sousandrei/iis2mdc/actions)
 [![Docs.rs](https://docs.rs/iis2mdc/badge.svg)](https://docs.rs/iis2mdc)
-![Crates.io](https://img.shields.io/crates/v/iis2mdc)[https://crates.io/crates/iis2mdc]
+[![Crates.io](https://img.shields.io/crates/v/iis2mdc)](https://crates.io/crates/iis2mdc)
 
 ## Table of Contents
 
