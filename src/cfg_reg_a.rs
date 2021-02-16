@@ -132,7 +132,7 @@ impl CfgRegA {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn comp_temp_en<I2C>(&mut self) -> bool {
+    pub fn comp_temp_en(&mut self) -> bool {
         self.0 & (1 << COMP_TEMP_EN) != 0
     }
 
@@ -145,7 +145,7 @@ impl CfgRegA {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn reboot<I2C>(&mut self) -> bool {
+    pub fn reboot(&mut self) -> bool {
         self.0 & (1 << REBOOT) != 0
     }
 
@@ -158,7 +158,7 @@ impl CfgRegA {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn soft_rst<I2C>(&mut self) -> bool {
+    pub fn soft_rst(&mut self) -> bool {
         self.0 & (1 << SOFT_RST) != 0
     }
 
@@ -171,7 +171,7 @@ impl CfgRegA {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn lp<I2C>(&mut self) -> bool {
+    pub fn lp(&mut self) -> bool {
         self.0 & (1 << LP) != 0
     }
 

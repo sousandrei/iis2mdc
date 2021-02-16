@@ -61,7 +61,7 @@ impl CfgRegC {
         CfgRegC(bits)
     }
 
-    pub fn int_on_pin<I2C>(&mut self) -> bool {
+    pub fn int_on_pin(&mut self) -> bool {
         self.0 & (1 << INT_ON_PIN) != 0
     }
 
@@ -74,7 +74,7 @@ impl CfgRegC {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn i2c_dis<I2C>(&mut self) -> bool {
+    pub fn i2c_dis(&mut self) -> bool {
         self.0 & (1 << I2C_DIS) != 0
     }
 
@@ -87,7 +87,7 @@ impl CfgRegC {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn bdu<I2C>(&mut self) -> bool {
+    pub fn bdu(&mut self) -> bool {
         self.0 & (1 << BDU) != 0
     }
 
@@ -100,7 +100,7 @@ impl CfgRegC {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn ble<I2C>(&mut self) -> bool {
+    pub fn ble(&mut self) -> bool {
         self.0 & (1 << BLE) != 0
     }
 
@@ -113,7 +113,7 @@ impl CfgRegC {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn self_test<I2C>(&mut self) -> bool {
+    pub fn self_test(&mut self) -> bool {
         self.0 & (1 << SELF_TEST) != 0
     }
 
@@ -126,7 +126,7 @@ impl CfgRegC {
         self.write(i2c, ADDR, self.0)
     }
 
-    pub fn drdy_on_pin<I2C>(&mut self) -> bool {
+    pub fn drdy_on_pin(&mut self) -> bool {
         self.0 & (1 << DRDY_ON_PIN) != 0
     }
 
