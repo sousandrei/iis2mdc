@@ -1,27 +1,25 @@
 [package]
-name = "iis2mdc"
-version = "0.1.0"
-edition = "2018"
 authors = ["Andrei Sousa <sousandrei@gmail.com>"]
 categories = ["embedded", "hardware-support", "no-std"]
-repository = "https://github.com/sousandrei/iis2mdc"
-documentation = "https://docs.rs/iis2mdc"
 description = "Simple driver for ST iis2mdc sensor"
-license = "MIT"
-readme = "README.md"
-keywords = ["i2c", "embedded-hal-driver", "iis2mdc", "magnetometer"]
+documentation = "https://docs.rs/iis2mdc"
+edition = "2018"
 include = ["src/", "LICENSE-*", "README.md", "CHANGELOG.md", "COPYRIGHT"]
+keywords = ["i2c", "embedded-hal-driver", "iis2mdc", "magnetometer"]
+license = "MIT"
+name = "iis2mdc"
+readme = "README.md"
+repository = "https://github.com/sousandrei/iis2mdc"
+version = "0.1.0"
 
 
 [dependencies]
-embedded-hal = "0.2.4"
+embedded-hal = "0.2.7"
 
 [dev-dependencies]
-cortex-m = "0.6.2"
-cortex-m-rt = "0.6.12"
-cortex-m-semihosting = "0.3.7"
-embedded-hal = "0.2.4"
-panic-semihosting = "0.5.6"
-
-# Waiting for a release inclusing stm32l433 I2C pins
-stm32l4xx-hal = { git = "https://github.com/stm32-rs/stm32l4xx-hal", features = ["rt", "stm32l4x3"] }
+cortex-m = "0.7.6"
+cortex-m-rt = "0.7.1"
+cortex-m-semihosting = "0.5.0"
+embedded-hal = "0.2.7"
+panic-semihosting = "0.6.0"
+stm32l4xx-hal = { version = "0.7.1", features = ["rt", "stm32l433"] }
