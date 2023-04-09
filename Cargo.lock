@@ -129,7 +129,7 @@ dependencies = [
 
 [[package]]
 name = "iis2mdc"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "cortex-m",
  "cortex-m-rt",
