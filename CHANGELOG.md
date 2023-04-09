@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.2](https://github.com/sousandrei/iis2mdc/compare/v0.1.1...v0.1.2) (2023-04-09)
+
+
+### Miscellaneous Chores
+
+* release 0.1.2 ([c9401a7](https://github.com/sousandrei/iis2mdc/commit/c9401a780748569eb5c771ec2fc13a6d1e5c3cf9))
+
 ## 0.1.1 (2022-09-17)
 
 
