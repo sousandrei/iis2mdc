@@ -68,7 +68,7 @@ dependencies = [
 
 [[package]]
 name = "iis2mdc"
-version = "0.1.2"
+version = "0.2.0"
 dependencies = [
  "approx",
  "embedded-hal 1.0.0",
