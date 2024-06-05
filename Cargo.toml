@@ -14,12 +14,8 @@ version = "0.1.2"
 
 
 [dependencies]
-embedded-hal = "0.2.7"
+embedded-hal = "1.0.0"
 
 [dev-dependencies]
-cortex-m = "0.7.7"
-cortex-m-rt = "0.7.4"
-cortex-m-semihosting = "0.5.0"
-embedded-hal = "0.2.7"
-panic-semihosting = "0.6.0"
-stm32l4xx-hal = { version = "0.7.1", features = ["rt", "stm32l433"] }
+approx = "0.5.1"
+embedded-hal-mock = "0.11"

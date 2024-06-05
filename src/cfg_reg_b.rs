@@ -1,5 +1,4 @@
 use core::fmt;
-use embedded_hal::blocking::i2c::Write;
 
 use crate::Register;
 
@@ -72,6 +71,13 @@ impl CfgRegB {
         CfgRegB(bits)
     }
 
+    pub fn value<I2C>(&mut self, i2c: &mut I2C) -> Result<u8, I2C::Error>
+    where
+        I2C: embedded_hal::i2c::I2c,
+    {
+        self.read(i2c, ADDR)
+    }
+
     pub fn off_canc_one_shot(&mut self) -> bool {
         self.0 & (1 << OFF_CANC_ONE_SHOT) != 0
     }
@@ -82,7 +88,7 @@ impl CfgRegB {
         value: bool,
     ) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << OFF_CANC_ONE_SHOT);
         self.0 |= (value as u8) << OFF_CANC_ONE_SHOT;
@@ -95,7 +101,7 @@ impl CfgRegB {
 
     pub fn set_int_on_dataoff<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << INT_ON_DATAOFF);
         self.0 |= (value as u8) << INT_ON_DATAOFF;
@@ -108,7 +114,7 @@ impl CfgRegB {
 
     pub fn set_set_freq<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << SET_FREQ);
         self.0 |= (value as u8) << SET_FREQ;
@@ -121,7 +127,7 @@ impl CfgRegB {
 
     pub fn set_off_canc<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << OFF_CANC);
         self.0 |= (value as u8) << OFF_CANC;
@@ -134,7 +140,7 @@ impl CfgRegB {
 
     pub fn set_lpf<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << LPF);
         self.0 |= (value as u8) << LPF;
