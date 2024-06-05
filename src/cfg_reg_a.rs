@@ -1,5 +1,4 @@
 use core::fmt;
-use embedded_hal::blocking::i2c::Write;
 
 use crate::Register;
 
@@ -94,6 +93,13 @@ impl CfgRegA {
         CfgRegA(bits)
     }
 
+    pub fn value<I2C>(&mut self, i2c: &mut I2C) -> Result<u8, I2C::Error>
+    where
+        I2C: embedded_hal::i2c::I2c,
+    {
+        self.read(i2c, ADDR)
+    }
+
     pub fn data_rate(&self) -> f32 {
         match (self.0 >> ODR_OFFSET) & ODR_MASK {
             0 => 10.0,
@@ -106,7 +112,7 @@ impl CfgRegA {
 
     pub fn set_data_rate<I2C>(&mut self, i2c: &mut I2C, value: Odr) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(ODR_MASK << ODR_OFFSET);
         self.0 |= (value as u8) << ODR_OFFSET;
@@ -125,7 +131,7 @@ impl CfgRegA {
 
     pub fn set_mode<I2C>(&mut self, i2c: &mut I2C, value: Mode) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(MODE_MASK << MODE_OFFSET);
         self.0 |= (value as u8) << MODE_OFFSET;
@@ -138,7 +144,7 @@ impl CfgRegA {
 
     pub fn set_comp_temp_en<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << COMP_TEMP_EN);
         self.0 |= (value as u8) << COMP_TEMP_EN;
@@ -151,7 +157,7 @@ impl CfgRegA {
 
     pub fn set_reboot<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << REBOOT);
         self.0 |= (value as u8) << REBOOT;
@@ -164,7 +170,7 @@ impl CfgRegA {
 
     pub fn set_soft_rst<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << SOFT_RST);
         self.0 |= (value as u8) << SOFT_RST;
@@ -177,7 +183,7 @@ impl CfgRegA {
 
     pub fn set_lp<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << LP);
         self.0 |= (value as u8) << LP;

@@ -1,5 +1,4 @@
 use core::fmt;
-use embedded_hal::blocking::i2c::Write;
 
 use crate::Register;
 
@@ -61,13 +60,20 @@ impl CfgRegC {
         CfgRegC(bits)
     }
 
+    pub fn value<I2C>(&mut self, i2c: &mut I2C) -> Result<u8, I2C::Error>
+    where
+        I2C: embedded_hal::i2c::I2c,
+    {
+        self.read(i2c, ADDR)
+    }
+
     pub fn int_on_pin(&mut self) -> bool {
         self.0 & (1 << INT_ON_PIN) != 0
     }
 
     pub fn set_int_on_pin<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << INT_ON_PIN);
         self.0 |= (value as u8) << INT_ON_PIN;
@@ -80,7 +86,7 @@ impl CfgRegC {
 
     pub fn set_i2c_dis<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << I2C_DIS);
         self.0 |= (value as u8) << I2C_DIS;
@@ -93,7 +99,7 @@ impl CfgRegC {
 
     pub fn set_bdu<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << BDU);
         self.0 |= (value as u8) << BDU;
@@ -106,7 +112,7 @@ impl CfgRegC {
 
     pub fn set_ble<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << BLE);
         self.0 |= (value as u8) << BLE;
@@ -119,7 +125,7 @@ impl CfgRegC {
 
     pub fn set_self_test<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << SELF_TEST);
         self.0 |= (value as u8) << SELF_TEST;
@@ -132,7 +138,7 @@ impl CfgRegC {
 
     pub fn set_drdy_on_pin<I2C>(&mut self, i2c: &mut I2C, value: bool) -> Result<(), I2C::Error>
     where
-        I2C: Write,
+        I2C: embedded_hal::i2c::I2c,
     {
         self.0 &= !(1 << DRDY_ON_PIN);
         self.0 |= (value as u8) << DRDY_ON_PIN;
