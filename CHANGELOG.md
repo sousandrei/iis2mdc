@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/sousandrei/iis2mdc/compare/v0.1.2...v0.2.0) (2024-06-05)
+
+
+### Features
+
+* **ehal:** migrate ehal to 1.0 ([#26](https://github.com/sousandrei/iis2mdc/issues/26)) ([31a9518](https://github.com/sousandrei/iis2mdc/commit/31a9518e1aec2629deb075ee57cff55cbedafb0c))
+
 ## [0.1.2](https://github.com/sousandrei/iis2mdc/compare/v0.1.1...v0.1.2) (2023-04-09)
 
 
