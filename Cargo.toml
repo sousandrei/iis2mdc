@@ -3,7 +3,7 @@ authors = ["Andrei Sousa <sousandrei@gmail.com>"]
 categories = ["embedded", "hardware-support", "no-std"]
 description = "Simple driver for ST iis2mdc sensor"
 documentation = "https://docs.rs/iis2mdc"
-edition = "2018"
+edition = "2024"
 include = ["src/", "LICENSE-*", "README.md", "CHANGELOG.md", "COPYRIGHT"]
 keywords = ["i2c", "embedded-hal-driver", "iis2mdc", "magnetometer"]
 license = "MIT"
@@ -15,6 +15,8 @@ version = "0.2.0"
 
 [dependencies]
 embedded-hal = "1.0.0"
+bitfield = "0.17.0"
+defmt = "1.0.1"
 
 [dev-dependencies]
 approx = "0.5.1"

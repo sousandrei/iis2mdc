@@ -9,7 +9,7 @@ use embassy_stm32::i2c::I2c;
 use embassy_stm32::time::Hertz;
 use embassy_time::Timer;
 
-use iis2mdc::Iis2mdc;
+use iis2mdc::{CfgRegAConfig, Iis2mdc, Magnetometer, Mode, Odr, Temperature};
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {
@@ -40,11 +40,11 @@ async fn main(_spawner: Spawner) {
     // =======================================
 
     loop {
-        defmt::info!("Temperature: {}", sensor.get_temperature(&mut i2c).unwrap());
-        defmt::info!(
-            "Measurements: {:?}",
-            sensor.get_measurements(&mut i2c).unwrap()
-        );
+        let temp = sensor.get_temperature(&mut i2c).unwrap();
+        defmt::info!("Temperature: {}°C", temp.as_celsius());
+
+        let mag = sensor.get_magnetometer(&mut i2c).unwrap();
+        defmt::info!("Measurements (uT): {:?}", mag.as_ut());
 
         Timer::after_millis(1000).await;
     }
@@ -55,21 +55,15 @@ async fn boot_sensor<I2C>(sensor: &mut Iis2mdc, i2c: &mut I2C)
 where
     I2C: embedded_hal::i2c::I2c,
 {
-    sensor.cfg_reg_a.set_soft_rst(i2c, true).unwrap();
+    sensor.set_soft_rst(i2c, true).unwrap();
 
     Timer::after_millis(1).await;
 
-    sensor.cfg_reg_a.set_reboot(i2c, true).unwrap();
+    sensor.set_reboot(i2c, true).unwrap();
 
     Timer::after_millis(20).await;
 
-    sensor
-        .cfg_reg_a
-        .set_data_rate(i2c, iis2mdc::cfg_reg_a::Odr::Hz50)
-        .unwrap();
+    sensor.set_odr(i2c, Odr::Hz50).unwrap();
 
-    sensor
-        .cfg_reg_a
-        .set_mode(i2c, iis2mdc::cfg_reg_a::Mode::Continuous)
-        .unwrap();
+    sensor.set_md(i2c, Mode::Continuous).unwrap();
 }

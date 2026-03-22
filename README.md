@@ -25,26 +25,25 @@ Check out the `examples` folder for simple implementation
 To declare a sensor is pretty simple:
 
 ```rust
-let sensor = Iis2mdc::new(&mut i2c).unwrap()
+let mut sensor = Iis2mdc::new(&mut i2c).unwrap();
 ```
 
-All registers have the bits addressed by their function, for example here se set the `BOOT` register in the `CTRL_3C` register to `1`
+To configure the sensor, use the high-level methods:
 
 ```rust
-sensor.cfg_reg_a.set_reboot(i2c, true).unwrap();
+use iis2mdc::{CfgRegAConfig, Odr};
+
+sensor.set_odr(&mut i2c, Odr::Hz50).unwrap();
+sensor.set_comp_temp_en(&mut i2c, true).unwrap();
 ```
 
-For bits that operate together, they have their custom type abstracted. For example, to set the accelerometer data rate you have to operate 4 bits. But here you just have to specify your desired data rate and the driver takes care of it.
+To read measurements:
 
 ```rust
-// Sets the following bits
-// ODR_0 to 1
-// ODR_1 to 0
+use iis2mdc::Magnetometer;
 
-sensor
-    .cfg_reg_a
-    .set_data_rate(i2c, iis2mdc::cfg_reg_a::Odr::Hz50)
-    .unwrap();
+let mag = sensor.get_magnetometer(&mut i2c).unwrap();
+println!("Mag: {:?}", mag.as_ut());
 ```
 
 ## <a name="help-wanted"></a> Help wanted 🤝
@@ -52,8 +51,6 @@ sensor
 All contributions are welcome!
 
 If you are using or plan to use this create don't hesitate to open an issue or a PR.
-
-Multiple registers are yet to be referenced!
 
 ## <a name="license"></a> License
 
