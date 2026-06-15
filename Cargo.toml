@@ -15,7 +15,7 @@ version = "0.2.0"
 
 [dependencies]
 embedded-hal = "1.0.0"
-bitfield = "0.17.0"
+bitfield = "0.19.4"
 defmt = "1.0.1"
 
 [dev-dependencies]
