@@ -32,8 +32,8 @@ jobs:
       - run: cargo fmt --all -- --check
         working-directory: ${{ matrix.folder }}
 
-      - run: cargo clippy --release -- -D warnings
+      - run: cargo clippy --release --target thumbv7em-none-eabi -- -D warnings
         working-directory: ${{ matrix.folder }}
 
-      - run: cargo build --release
+      - run: cargo build --release --target thumbv7em-none-eabi
         working-directory: ${{ matrix.folder }}

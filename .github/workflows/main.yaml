@@ -14,25 +14,25 @@ jobs:
 
     strategy:
       matrix:
-        folder: [".", "examples/stm32l433"]
-    
+        folder: ['.', 'examples/stm32l433']
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
           targets: thumbv7em-none-eabi
 
-      - uses: Swatinem/rust-cache@v2.7.5
-      
+      - uses: Swatinem/rust-cache@v2.9.2
+
       - run: cargo fmt --all -- --check
         working-directory: ${{ matrix.folder }}
 
-      - run: cargo clippy --release -- -D warnings
+      - run: cargo clippy --release --target thumbv7em-none-eabi -- -D warnings
         working-directory: ${{ matrix.folder }}
 
-      - run: cargo build --release
+      - run: cargo build --release --target thumbv7em-none-eabi
         working-directory: ${{ matrix.folder }}
 
   release:
@@ -46,10 +46,7 @@ jobs:
       pull-requests: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: google-github-actions/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
         id: release
-        with:
-          release-type: rust
-          package-name: iis2mdc
