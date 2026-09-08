@@ -1,7 +1,5 @@
-use embedded_hal::i2c::I2c;
-
-use crate::Iis2mdc;
 use crate::registers::{IntCtrlReg, IntSourceReg, Register};
+use crate::{Iis2mdc, RegisterBus as I2c};
 
 /// Interrupt control configuration methods.
 pub trait InterruptControl {

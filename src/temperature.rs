@@ -1,7 +1,5 @@
-use embedded_hal::i2c::I2c;
-
-use crate::Iis2mdc;
 use crate::registers::Register;
+use crate::{Iis2mdc, RegisterBus as I2c};
 
 /// High-level temperature reading.
 #[derive(Copy, Clone, Debug, defmt::Format)]

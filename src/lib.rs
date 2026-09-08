@@ -6,6 +6,13 @@
 //! ```rust,ignore
 //! let mut sensor = Iis2mdc::new(&mut i2c).unwrap();
 //! ```
+//! For SPI, wrap an already-configured four-wire [`embedded_hal::spi::SpiDevice`]:
+//! ```rust,ignore
+//! let mut spi = SpiDeviceBus::new(spi_device);
+//! let mut sensor = Iis2mdc::new_spi(&mut spi).unwrap();
+//! ```
+//! SPI mode, clock frequency, and electrical setup are selected by the caller
+//! according to the datasheet and their HAL.
 //!
 //! To configure the sensor, use the high-level methods:
 //!
@@ -26,6 +33,7 @@ pub mod interrupts;
 pub mod magnetometer;
 pub mod offsets;
 pub mod registers;
+pub mod spi;
 pub mod status;
 pub mod temperature;
 
@@ -44,10 +52,12 @@ pub use configuration::Configuration;
 pub use interrupts::{InterruptControl, InterruptSource, InterruptThreshold};
 pub use magnetometer::{MagValue, Magnetometer};
 pub use offsets::HardIronOffsets;
+pub use spi::SpiDeviceBus;
 pub use status::Status;
 pub use temperature::{TempValue, Temperature};
 
 use embedded_hal::i2c::I2c;
+use embedded_hal::spi::SpiDevice;
 
 /// Datasheet write address for the device. (1Eh)
 pub const DEFAULT_I2C_ADDRESS: u8 = 0x1Eu8;
@@ -57,12 +67,15 @@ pub const DEFAULT_I2C_ADDRESS: u8 = 0x1Eu8;
 pub enum Error<E> {
     /// I2C bus error.
     I2c(E),
+    /// SPI bus error.
+    Spi(E),
     /// Invalid device found (WHO_AM_I mismatch).
     InvalidDevice(u8),
 }
 
 /// Internal register transport used by the feature implementations.
-pub(crate) trait RegisterBus {
+/// Internal register transport contract implemented by I2C and SPI buses.
+pub trait RegisterBus {
     type Error;
 
     fn read_register(
@@ -142,6 +155,27 @@ impl Iis2mdc {
         // Set sane defaults: BDU
         sensor.set_bdu(i2c, true)?;
 
+        Ok(sensor)
+    }
+
+    /// Create a driver using an already-configured SPI device.
+    pub fn new_spi<SPI>(spi: &mut SpiDeviceBus<SPI>) -> Result<Self, Error<SPI::Error>>
+    where
+        SPI: SpiDevice<u8>,
+    {
+        let sensor = Self {
+            address: DEFAULT_I2C_ADDRESS,
+        };
+        let mut buffer = [0u8];
+        sensor
+            .read_regs(spi, Register::WhoAmI, &mut buffer)
+            .map_err(Error::Spi)?;
+
+        if buffer[0] != 0x40 {
+            return Err(Error::InvalidDevice(buffer[0]));
+        }
+
+        sensor.set_bdu(spi, true).map_err(Error::Spi)?;
         Ok(sensor)
     }
 

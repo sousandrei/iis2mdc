@@ -1,7 +1,5 @@
-use embedded_hal::i2c::I2c;
-
-use crate::Iis2mdc;
 use crate::registers::{Register, StatusReg};
+use crate::{Iis2mdc, RegisterBus as I2c};
 
 /// Status register access methods.
 pub trait Status {

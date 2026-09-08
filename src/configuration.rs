@@ -1,7 +1,5 @@
-use embedded_hal::i2c::I2c;
-
-use crate::Iis2mdc;
 use crate::registers::{CfgRegA, CfgRegB, CfgRegC, Mode, Odr, Register};
+use crate::{Iis2mdc, RegisterBus as I2c};
 
 /// Core IIS2MDC configuration methods.
 pub trait Configuration {
