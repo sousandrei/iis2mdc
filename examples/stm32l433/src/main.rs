@@ -63,7 +63,8 @@ where
 
     Timer::after_millis(20).await;
 
+    sensor.set_comp_temp_en(i2c, true).unwrap();
+    sensor.set_bdu(i2c, true).unwrap();
     sensor.set_odr(i2c, Odr::Hz50).unwrap();
-
     sensor.set_md(i2c, Mode::Continuous).unwrap();
 }
