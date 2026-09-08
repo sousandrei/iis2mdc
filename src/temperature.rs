@@ -60,7 +60,7 @@ mod tests {
         };
         let mut i2c = Mock::new(&[Transaction::write_read(
             crate::DEFAULT_I2C_ADDRESS,
-            vec![Register::TempOutLReg.addr()],
+            vec![Register::TempOutLReg.addr() | 0x80],
             vec![0x00, 0x01],
         )]);
 

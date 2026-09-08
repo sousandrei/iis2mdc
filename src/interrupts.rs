@@ -124,7 +124,7 @@ mod tests {
         };
         let mut i2c = Mock::new(&[Transaction::write(
             crate::DEFAULT_I2C_ADDRESS,
-            vec![Register::IntThsLReg.addr(), 0x34, 0x12],
+            vec![Register::IntThsLReg.addr() | 0x80, 0x34, 0x12],
         )]);
 
         sensor.set_int_threshold(&mut i2c, 0x1234).unwrap();

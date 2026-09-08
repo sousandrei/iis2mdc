@@ -62,7 +62,7 @@ mod tests {
         };
         let mut i2c = Mock::new(&[Transaction::write(
             crate::DEFAULT_I2C_ADDRESS,
-            vec![Register::OffsetYRegL.addr(), 0xa6, 0xff],
+            vec![Register::OffsetYRegL.addr() | 0x80, 0xa6, 0xff],
         )]);
 
         sensor.set_offset_y(&mut i2c, -90).unwrap();

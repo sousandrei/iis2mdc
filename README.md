@@ -63,9 +63,14 @@ let mut spi = SpiDeviceBus::new(spi_device);
 let sensor = Iis2mdc::new_spi(&mut spi).unwrap();
 ```
 
-Four-wire SPI is supported. Three-wire SPI is not currently supported. Reset
-and reboot operations remain explicit and must be followed by the datasheet's
+Four-wire SPI is supported. Three-wire SPI is not supported yet because it
+uses one shared data line and requires special half-duplex handling. Reset and
+reboot operations remain explicit and must be followed by the datasheet's
 required delays when used.
+
+The driver configures sensor-side interrupt routing, polarity, latching,
+thresholds, and data-ready behavior. MCU GPIO setup, edge detection, and
+interrupt dispatch remain responsibilities of the application and its HAL.
 
 See the `examples` directory for a board-level I2C example.
 

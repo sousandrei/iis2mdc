@@ -23,6 +23,10 @@
 //! Reset and reboot operations are explicit. After enabling either operation,
 //! wait for the datasheet-specified completion time before continuing.
 //! Feature traits also work with [`SpiDeviceBus`] for four-wire SPI.
+//! Sensor-side interrupt routing is exposed by [`InterruptControl`]; MCU GPIO
+//! setup and interrupt dispatch remain application and HAL responsibilities.
+//! Three-wire SPI is not supported yet because it uses one shared data line
+//! and requires special half-duplex handling.
 //!
 //! # Reference
 //!
@@ -104,6 +108,11 @@ where
         register: u8,
         data: &mut [u8],
     ) -> Result<(), Self::Error> {
+        let register = if data.len() > 1 {
+            register | 0x80
+        } else {
+            register
+        };
         self.write_read(address, &[register], data)
     }
 
@@ -115,7 +124,11 @@ where
     ) -> Result<(), Self::Error> {
         // IIS2MDC block writes currently require at most six data bytes.
         let mut buffer = [0u8; 7];
-        buffer[0] = register;
+        buffer[0] = if data.len() > 1 {
+            register | 0x80
+        } else {
+            register
+        };
         buffer[1..data.len() + 1].copy_from_slice(data);
         self.write(address, &buffer[..data.len() + 1])
     }
@@ -260,7 +273,7 @@ mod tests {
         };
         let mut i2c = Mock::new(&[Transaction::write_read(
             DEFAULT_I2C_ADDRESS,
-            vec![Register::OutXRegL.addr()],
+            vec![Register::OutXRegL.addr() | 0x80],
             vec![1, 2, 3, 4, 5, 6],
         )]);
         let mut data = [0u8; 6];
@@ -280,7 +293,7 @@ mod tests {
         };
         let mut i2c = Mock::new(&[Transaction::write(
             DEFAULT_I2C_ADDRESS,
-            vec![Register::OffsetXRegL.addr(), 0x34, 0x12],
+            vec![Register::OffsetXRegL.addr() | 0x80, 0x34, 0x12],
         )]);
 
         sensor
@@ -299,5 +312,19 @@ mod tests {
         sensor.set_address(0x1f);
 
         assert_eq!(sensor.address, 0x1f);
+    }
+
+    #[test]
+    fn rejects_invalid_who_am_i() {
+        let mut i2c = Mock::new(&[Transaction::write_read(
+            DEFAULT_I2C_ADDRESS,
+            vec![Register::WhoAmI.addr()],
+            vec![0x00],
+        )]);
+
+        let result = Iis2mdc::new(&mut i2c);
+
+        assert!(matches!(result, Err(Error::InvalidDevice(0x00))));
+        i2c.done();
     }
 }

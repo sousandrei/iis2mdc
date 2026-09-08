@@ -32,6 +32,9 @@ where
         register: u8,
         data: &mut [u8],
     ) -> Result<(), Self::Error> {
+        // The IIS2MDC uses the MSB as the SPI read bit and the lower seven
+        // bits as the register address. Additional clocked bytes increment
+        // the device address automatically.
         let mut buffer = [0u8; 7];
         buffer[0] = register | 0x80;
 
@@ -64,11 +67,12 @@ mod tests {
     fn writes_register_with_write_command_bit_cleared() {
         let mut spi = SpiDeviceBus::new(Mock::new(&[
             Transaction::transaction_start(),
-            Transaction::write_vec(vec![0x60, 0xaa, 0x55]),
+            Transaction::write_vec(vec![crate::Register::CfgRegA.addr(), 0xaa, 0x55]),
             Transaction::transaction_end(),
         ]));
 
-        spi.write_register(0, 0xe0, &[0xaa, 0x55]).unwrap();
+        spi.write_register(0, crate::Register::CfgRegA.addr(), &[0xaa, 0x55])
+            .unwrap();
         spi.device.done();
     }
 
@@ -76,12 +80,13 @@ mod tests {
     fn reads_register_with_read_command_bit_set() {
         let mut spi = SpiDeviceBus::new(Mock::new(&[
             Transaction::transaction_start(),
-            Transaction::transfer_in_place(vec![0x80, 0, 0], vec![0, 0x34, 0x12]),
+            Transaction::transfer_in_place(vec![0xcf, 0, 0], vec![0, 0x34, 0x12]),
             Transaction::transaction_end(),
         ]));
         let mut data = [0u8; 2];
 
-        spi.read_register(0, 0, &mut data).unwrap();
+        spi.read_register(0, crate::Register::WhoAmI.addr(), &mut data)
+            .unwrap();
 
         assert_eq!(data, [0x34, 0x12]);
         spi.device.done();
@@ -94,13 +99,15 @@ mod tests {
             Transaction::write_vec(vec![0x45, 1, 2]),
             Transaction::transaction_end(),
             Transaction::transaction_start(),
-            Transaction::transfer_in_place(vec![0xc5, 0, 0], vec![0, 3, 4]),
+            Transaction::transfer_in_place(vec![0xe8, 0, 0], vec![0, 3, 4]),
             Transaction::transaction_end(),
         ]));
 
-        spi.write_register(0, 0xc5, &[1, 2]).unwrap();
+        spi.write_register(0, crate::Register::OffsetXRegL.addr(), &[1, 2])
+            .unwrap();
         let mut data = [0u8; 2];
-        spi.read_register(0, 0x45, &mut data).unwrap();
+        spi.read_register(0, crate::Register::OutXRegL.addr(), &mut data)
+            .unwrap();
 
         assert_eq!(data, [3, 4]);
         spi.device.done();
@@ -123,6 +130,59 @@ mod tests {
         let sensor = crate::Iis2mdc::new_spi(&mut spi).unwrap();
 
         assert_eq!(sensor.address, crate::DEFAULT_I2C_ADDRESS);
+        spi.device.done();
+    }
+
+    #[test]
+    fn reads_magnetometer_through_the_public_feature_api() {
+        let mut spi = SpiDeviceBus::new(Mock::new(&[
+            Transaction::transaction_start(),
+            Transaction::transfer_in_place(
+                vec![0xe8, 0, 0, 0, 0, 0, 0],
+                vec![0, 0x34, 0x12, 0xff, 0xff, 0x00, 0x80],
+            ),
+            Transaction::transaction_end(),
+        ]));
+        let sensor = crate::Iis2mdc {
+            address: crate::DEFAULT_I2C_ADDRESS,
+        };
+
+        let value = crate::Magnetometer::get_magnetometer(&sensor, &mut spi).unwrap();
+
+        assert_eq!(value.count(), [0x1234, -1, -32768]);
+        spi.device.done();
+    }
+
+    #[test]
+    fn applies_configuration_through_the_public_feature_api() {
+        let mut spi = SpiDeviceBus::new(Mock::new(&[
+            Transaction::transaction_start(),
+            Transaction::transfer_in_place(vec![0xe0, 0], vec![0, 0x03]),
+            Transaction::transaction_end(),
+            Transaction::transaction_start(),
+            Transaction::write_vec(vec![0x60, 0x0b]),
+            Transaction::transaction_end(),
+        ]));
+        let sensor = crate::Iis2mdc {
+            address: crate::DEFAULT_I2C_ADDRESS,
+        };
+
+        crate::Configuration::set_odr(&sensor, &mut spi, crate::Odr::Hz50).unwrap();
+
+        spi.device.done();
+    }
+
+    #[test]
+    fn rejects_invalid_who_am_i() {
+        let mut spi = SpiDeviceBus::new(Mock::new(&[
+            Transaction::transaction_start(),
+            Transaction::transfer_in_place(vec![0xcf, 0], vec![0, 0]),
+            Transaction::transaction_end(),
+        ]));
+
+        let result = crate::Iis2mdc::new_spi(&mut spi);
+
+        assert!(matches!(result, Err(crate::Error::InvalidDevice(0))));
         spi.device.done();
     }
 }
