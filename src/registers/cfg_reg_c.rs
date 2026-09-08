@@ -4,7 +4,10 @@ use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
 bitfield! {
-    /// Configuration register C
+    /// Configuration register C.
+    ///
+    /// Bit 2 is reserved and must remain zero for correct operation. It has no
+    /// setter, and read-modify-write operations preserve its current value.
     pub struct CfgRegC(u8);
     impl Debug;
     /// INTERRUPT signal is driven on the INT/DRDY pin
@@ -15,6 +18,8 @@ bitfield! {
     pub bdu, set_bdu: 4;
     /// Inversion of the low and high parts of the data
     pub ble, set_ble: 3;
+    /// Reserved bit.
+    pub reserved, _: 2;
     /// Self-test enable
     pub self_test, set_self_test: 1;
     /// Data-ready signal is driven on the INT/DRDY pin
@@ -22,12 +27,17 @@ bitfield! {
 }
 
 impl CfgRegC {
+    /// Create a register with its datasheet reset value.
     pub fn new() -> Self {
         Self(0x00)
     }
+
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
     }
+
+    /// Serialize the register as one byte.
     pub fn into_bytes(self) -> [u8; 1] {
         [self.0]
     }
@@ -127,5 +137,24 @@ impl CfgRegCConfig for Iis2mdc {
             reg.set_drdy_on_pin(val);
             reg.0
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fields_match_register_bits_and_preserve_reserved_bit() {
+        let mut reg = CfgRegC::from_bytes([0x04]);
+        reg.set_int_on_pin(true);
+        reg.set_i2c_dis(true);
+        reg.set_bdu(true);
+        reg.set_ble(true);
+        reg.set_self_test(true);
+        reg.set_drdy_on_pin(true);
+
+        assert_eq!(reg.into_bytes(), [0x7f]);
+        assert_eq!(CfgRegC::default().into_bytes(), [0x00]);
     }
 }

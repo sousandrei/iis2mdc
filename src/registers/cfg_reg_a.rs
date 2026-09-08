@@ -3,7 +3,7 @@ use crate::registers::Register;
 use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
-/// Output data rate configuration
+/// Output data rate configuration.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, defmt::Format)]
 pub enum Odr {
     /// 10 Hz
@@ -32,7 +32,7 @@ impl From<Odr> for u8 {
     }
 }
 
-/// Mode of operation
+/// Mode of operation.
 #[derive(Debug, Copy, Clone, Eq, PartialEq, defmt::Format)]
 pub enum Mode {
     /// Continuous mode
@@ -60,7 +60,9 @@ impl From<Mode> for u8 {
 }
 
 bitfield! {
-    /// Configuration register A
+    /// Configuration register A.
+    ///
+    /// The reset value is `0x03`, which selects idle mode.
     pub struct CfgRegA(u8);
     impl Debug;
     /// Enables the magnetometer temperature compensation
@@ -78,12 +80,17 @@ bitfield! {
 }
 
 impl CfgRegA {
+    /// Create a register with its datasheet reset value.
     pub fn new() -> Self {
-        Self(0x03) // Default value: 00000011 -> Idle mode
+        Self(0x03)
     }
+
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
     }
+
+    /// Serialize the register as one byte.
     pub fn into_bytes(self) -> [u8; 1] {
         [self.0]
     }
@@ -183,5 +190,24 @@ impl CfgRegAConfig for Iis2mdc {
             reg.set_md(val);
             reg.0
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fields_match_register_bits() {
+        let mut reg = CfgRegA::default();
+        reg.set_comp_temp_en(true);
+        reg.set_reboot(true);
+        reg.set_soft_rst(true);
+        reg.set_lp(true);
+        reg.set_odr(Odr::Hz50);
+        reg.set_md(Mode::Continuous);
+
+        assert_eq!(reg.into_bytes(), [0xf8]);
+        assert_eq!(CfgRegA::default().into_bytes(), [0x03]);
     }
 }

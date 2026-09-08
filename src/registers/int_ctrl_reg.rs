@@ -4,7 +4,10 @@ use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
 bitfield! {
-    /// Interrupt control register
+    /// Interrupt control register.
+    ///
+    /// Bits 4:3 are reserved and have no setter. Read-modify-write operations
+    /// preserve their current values.
     pub struct IntCtrlReg(u8);
     impl Debug;
     /// Enables the interrupt detection for the X-axis
@@ -13,6 +16,8 @@ bitfield! {
     pub yien, set_yien: 6;
     /// Enables the interrupt detection for the Z-axis
     pub zien, set_zien: 5;
+    /// Reserved bits.
+    pub reserved, _: 4, 3;
     /// Controls the polarity of the INT bit
     pub iea, set_iea: 2;
     /// Controls whether the INT bit is latched or pulsed
@@ -22,12 +27,17 @@ bitfield! {
 }
 
 impl IntCtrlReg {
+    /// Create a register with its datasheet reset value.
     pub fn new() -> Self {
-        Self(0xE0) // Default value: 11100000 -> XIEN, YIEN, ZIEN enabled
+        Self(0xE0)
     }
+
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
     }
+
+    /// Serialize the register as one byte.
     pub fn into_bytes(self) -> [u8; 1] {
         [self.0]
     }
@@ -127,5 +137,24 @@ impl IntCtrlRegConfig for Iis2mdc {
             reg.set_ien(val);
             reg.0
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fields_match_register_bits_and_preserve_reserved_bits() {
+        let mut reg = IntCtrlReg::from_bytes([0x18]);
+        reg.set_xien(true);
+        reg.set_yien(true);
+        reg.set_zien(true);
+        reg.set_iea(true);
+        reg.set_iel(true);
+        reg.set_ien(true);
+
+        assert_eq!(reg.into_bytes(), [0xff]);
+        assert_eq!(IntCtrlReg::default().into_bytes(), [0xe0]);
     }
 }

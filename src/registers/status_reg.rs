@@ -4,7 +4,7 @@ use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
 bitfield! {
-    /// Status register
+    /// Status register.
     pub struct StatusReg(u8);
     impl Debug;
     /// X, Y, and Z-axis data overrun
@@ -26,8 +26,14 @@ bitfield! {
 }
 
 impl StatusReg {
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
+    }
+
+    /// Serialize the register as one byte.
+    pub fn into_bytes(self) -> [u8; 1] {
+        [self.0]
     }
 }
 

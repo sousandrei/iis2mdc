@@ -85,7 +85,11 @@ impl Magnetometer for Iis2mdc {
         I2C: I2c,
     {
         let mut measurements = [0u8; 6];
-        i2c.write_read(self.address, &[Register::OutXRegL.addr()], &mut measurements)?;
+        i2c.write_read(
+            self.address,
+            &[Register::OutXRegL.addr()],
+            &mut measurements,
+        )?;
 
         Ok(MagValue::from_msr(&measurements))
     }

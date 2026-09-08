@@ -45,7 +45,11 @@ impl Temperature for Iis2mdc {
         I2C: I2c,
     {
         let mut measurements = [0u8; 2];
-        i2c.write_read(self.address, &[Register::TempOutLReg.addr()], &mut measurements)?;
+        i2c.write_read(
+            self.address,
+            &[Register::TempOutLReg.addr()],
+            &mut measurements,
+        )?;
 
         Ok(TempValue::from_msr(&measurements))
     }

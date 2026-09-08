@@ -4,7 +4,7 @@ use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
 bitfield! {
-    /// Interrupt source register
+    /// Interrupt source register.
     pub struct IntSourceReg(u8);
     impl Debug;
     /// X-axis value exceeds the threshold positive side
@@ -26,8 +26,14 @@ bitfield! {
 }
 
 impl IntSourceReg {
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
+    }
+
+    /// Serialize the register as one byte.
+    pub fn into_bytes(self) -> [u8; 1] {
+        [self.0]
     }
 }
 

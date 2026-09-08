@@ -4,9 +4,14 @@ use bitfield::bitfield;
 use embedded_hal::i2c::I2c;
 
 bitfield! {
-    /// Configuration register B
+    /// Configuration register B.
+    ///
+    /// Bits 7:5 are reserved by the device and have no setter. Read-modify-
+    /// write operations preserve their current values.
     pub struct CfgRegB(u8);
     impl Debug;
+    /// Reserved bits.
+    pub reserved, _: 7, 5;
     /// Enables offset cancellation in single measurement mode
     pub off_canc_one_shot, set_off_canc_one_shot: 4;
     /// Interrupt block recognition checks data after hard-iron correction
@@ -20,12 +25,17 @@ bitfield! {
 }
 
 impl CfgRegB {
+    /// Create a register with its datasheet reset value.
     pub fn new() -> Self {
         Self(0x00)
     }
+
+    /// Create a register from its serialized byte.
     pub fn from_bytes(bytes: [u8; 1]) -> Self {
         Self(bytes[0])
     }
+
+    /// Serialize the register as one byte.
     pub fn into_bytes(self) -> [u8; 1] {
         [self.0]
     }
@@ -111,5 +121,23 @@ impl CfgRegBConfig for Iis2mdc {
             reg.set_lpf(val);
             reg.0
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn fields_match_register_bits_and_preserve_reserved_bits() {
+        let mut reg = CfgRegB::from_bytes([0xe0]);
+        reg.set_off_canc_one_shot(true);
+        reg.set_int_on_dataoff(true);
+        reg.set_set_freq(true);
+        reg.set_off_canc(true);
+        reg.set_lpf(true);
+
+        assert_eq!(reg.into_bytes(), [0xff]);
+        assert_eq!(CfgRegB::default().into_bytes(), [0x00]);
     }
 }

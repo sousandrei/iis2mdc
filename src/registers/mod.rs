@@ -75,8 +75,46 @@ pub enum Register {
 }
 
 impl Register {
-    /// Get the register address
-    pub fn addr(&self) -> u8 {
-        *self as u8
+    /// Return the register address.
+    pub const fn addr(self) -> u8 {
+        self as u8
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Register;
+
+    #[test]
+    fn register_addresses_match_datasheet() {
+        let addresses = [
+            (Register::OffsetXRegL, 0x45),
+            (Register::OffsetXRegH, 0x46),
+            (Register::OffsetYRegL, 0x47),
+            (Register::OffsetYRegH, 0x48),
+            (Register::OffsetZRegL, 0x49),
+            (Register::OffsetZRegH, 0x4a),
+            (Register::WhoAmI, 0x4f),
+            (Register::CfgRegA, 0x60),
+            (Register::CfgRegB, 0x61),
+            (Register::CfgRegC, 0x62),
+            (Register::IntCtrlReg, 0x63),
+            (Register::IntSourceReg, 0x64),
+            (Register::IntThsLReg, 0x65),
+            (Register::IntThsHReg, 0x66),
+            (Register::StatusReg, 0x67),
+            (Register::OutXRegL, 0x68),
+            (Register::OutXRegH, 0x69),
+            (Register::OutYRegL, 0x6a),
+            (Register::OutYRegH, 0x6b),
+            (Register::OutZRegL, 0x6c),
+            (Register::OutZRegH, 0x6d),
+            (Register::TempOutLReg, 0x6e),
+            (Register::TempOutHReg, 0x6f),
+        ];
+
+        for (register, address) in addresses {
+            assert_eq!(register.addr(), address);
+        }
     }
 }
