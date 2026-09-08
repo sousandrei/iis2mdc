@@ -15,12 +15,10 @@ cortex-m-rt = "0.7.6"
 embedded-hal = { package = "embedded-hal", version = "1.0" }
 panic-probe = { version = "1.0.0", features = ["print-defmt"] }
 
-embassy-executor = { version = "0.5.0", features = [
-    "task-arena-size-32768",
-    "arch-cortex-m",
+embassy-executor = { version = "0.10.0", features = [
+    "platform-cortex-m",
     "executor-thread",
     "defmt",
-    "integrated-timers",
 ] }
 
 embassy-stm32 = { version = "0.6.0", features = [
@@ -37,9 +35,3 @@ embassy-time = { version = "0.5.1", features = [
     "defmt-timestamp-uptime",
     "tick-hz-32_768",
 ] }
-
-
-[patch.crates-io]
-embassy-executor = { git = "https://github.com/embassy-rs/embassy.git", rev = "62f4b4ee1edc156663aaa26ce92c24f173ea660a" }
-embassy-stm32 = { git = "https://github.com/embassy-rs/embassy.git", rev = "62f4b4ee1edc156663aaa26ce92c24f173ea660a" }
-embassy-time = { git = "https://github.com/embassy-rs/embassy.git", rev = "62f4b4ee1edc156663aaa26ce92c24f173ea660a" }

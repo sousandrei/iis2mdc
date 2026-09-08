@@ -20,6 +20,9 @@
 //! sensor.set_odr(&mut i2c, Odr::Hz50).unwrap();
 //! sensor.set_comp_temp_en(&mut i2c, true).unwrap();
 //! ```
+//! Reset and reboot operations are explicit. After enabling either operation,
+//! wait for the datasheet-specified completion time before continuing.
+//! Feature traits also work with [`SpiDeviceBus`] for four-wire SPI.
 //!
 //! # Reference
 //!
