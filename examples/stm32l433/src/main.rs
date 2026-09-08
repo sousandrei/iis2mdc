@@ -9,7 +9,7 @@ use embassy_stm32::i2c::I2c;
 use embassy_stm32::time::Hertz;
 use embassy_time::Timer;
 
-use iis2mdc::{CfgRegAConfig, Iis2mdc, Magnetometer, Mode, Odr, Temperature};
+use iis2mdc::{Configuration, Iis2mdc, Magnetometer, Mode, Odr, Temperature};
 
 #[embassy_executor::main]
 async fn main(_spawner: Spawner) {

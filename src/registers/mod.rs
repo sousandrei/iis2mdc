@@ -5,10 +5,7 @@ pub mod cfg_reg_b;
 pub mod cfg_reg_c;
 pub mod int_ctrl_reg;
 pub mod int_source_reg;
-pub mod int_ths;
-pub mod offset;
 pub mod out_mag;
-pub mod out_temp;
 pub mod status_reg;
 
 pub use cfg_reg_a::*;
@@ -16,10 +13,7 @@ pub use cfg_reg_b::*;
 pub use cfg_reg_c::*;
 pub use int_ctrl_reg::*;
 pub use int_source_reg::*;
-pub use int_ths::*;
-pub use offset::*;
 pub use out_mag::*;
-pub use out_temp::*;
 pub use status_reg::*;
 
 /// Register addresses.
