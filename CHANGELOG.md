@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0](https://github.com/sousandrei/iis2mdc/compare/v0.2.0...v0.3.0) (2026-09-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* lib rewrite with all registers
+
+### Features
+
+* lib rewrite with all registers ([5eeef45](https://github.com/sousandrei/iis2mdc/commit/5eeef452750c46415ba707047c221ccf3cd12cd3))
+* **registers:** standardize register model ([82e6e17](https://github.com/sousandrei/iis2mdc/commit/82e6e1786ea13450d446cb745208eb16cb2a7075))
+* **spi:** add four-wire transport ([1f470eb](https://github.com/sousandrei/iis2mdc/commit/1f470ebf67bab2373c2d3e511a620b0b410d41be))
+
+
+### Bug Fixes
+
+* **transport:** support block auto-increment ([4a8f130](https://github.com/sousandrei/iis2mdc/commit/4a8f130e4686861dbcd5b72812756de6bcb33cea))
+
 ## [0.2.0](https://github.com/sousandrei/iis2mdc/compare/v0.1.2...v0.2.0) (2024-06-05)
 
 
